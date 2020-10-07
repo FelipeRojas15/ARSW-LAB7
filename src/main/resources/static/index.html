@@ -14,9 +14,14 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.0/jquery.min.js" integrity="sha256-xNzN2a4ltkB44Mc/Jz3pT4iU1cmeR0FkXs4pru/JxaQ=" crossorigin="anonymous"></script>
     <script src="https://code.jquery.com/jquery-3.5.0.js"></script>
+    <script src="/webjars/sockjs-client/sockjs.min.js"></script>
+    <script src="/webjars/stomp-websocket/stomp.min.js"></script>
+    <script src="js/stomp.js"></script>
+    <script src="js/stompModel.js"></script>
     <script src="js/apiclient.js"></script>
     <script src="js/apimock.js"></script>
     <script src="js/app.js"></script>
+    <script> app.init()</script>
     <title>Cinema bookings</title>
     
 </head>
@@ -66,6 +71,17 @@
                 Availability of: 
             </div>
             <canvas id="myCanvas" width="900" height="700" style="border:1px solid #1b1818;"></canvas>
+            <form class="form-inline" style="text-align: center;">
+                <div id="formulario" style="text-align: left;" >
+                    <h3>Buy Ticket</h3>
+                    <br>
+                    <div class="form-group mx-sm-3 mb-2">
+                        <input type="text" class="form-control" id="row" placeholder="Row">
+                        <input type="text" class="form-control" id="col" placeholder="Col">
+                        <button type="button" class="btn btn-dark" onclick="app.buyTicket($('#row').val(),$('#col').val())" id="buy">Buy</button>
+                    </div>
+                </div>
+            </form>
             <h2>
                 <div style="text-align-last: center;" id= administrador>
                     Administrator mode

@@ -1,11 +1,68 @@
 var app = (function () {
     var cinemaSeleccionado = "";
+    var seats = [[true, true, true, true, true, true, true, true, true, true, true, true], [true, true, true, true, true, true, true, true, true, true, true, true], [true, true, true, true, true, true, true, true, true, true, true, true], [true, true, true, true, true, true, true, true, true, true, true, true], [true, true, true, true, true, true, true, true, true, true, true, true], [true, true, true, true, true, true, true, true, true, true, true, true], [true, true, true, true, true, true, true, true, true, true, true, true]];
     var fecha = "";
     var fechaCompleta = "";
     var listados = [];
     var seatslocal = [];
     var archivo = apiclient;
     var nombrePelicula = "";
+    var col = "";
+    var row = "";
+    let stompClient = null;
+
+    class Seat {
+      constructor(row, col) {
+          this.row = row;
+          this.col = col;
+      }
+  }
+  var connectAndSubscribe = function () {
+    console.info('Connecting to WS...');
+    var socket = new SockJS('/stompendpoint');
+    stompClient = Stomp.over(socket);
+
+    //subscribe to /topic/TOPICXX when connections succeed
+    stompClient.connect({}, function (frame) {
+        console.log('Connected: ' + frame);
+        stompClient.subscribe('/topic/buyticket', function (eventbody) {
+           console.alert("evento recibido");
+           var theObject=JSON.parse(message.body);
+
+        });
+    });
+
+};
+    var verifyAvailability = function (row,col) {
+      var st = new Seat(row, col);
+      if (seats[row][col]===true){
+          seats[row][col]=false;
+          console.info("purchased ticket");
+          stompClient.send("/app/buyticket", {}, JSON.stringify(st)); 
+          
+      }
+      else{
+          console.info("Ticket not available");
+      }  
+
+    };
+    var buyTicket = function (row, col) {
+      console.info("buying ticket at row: " + row + "col: " + col);
+      verifyAvailability(row,col);
+      
+    }
+
+
+
+    init = function(){
+      connectAndSubscribe();
+    }
+
+
+
+
+
+
 
     setCinema = function(){
       cinemaSeleccionado = $("#name").val();
@@ -35,6 +92,7 @@ var app = (function () {
       })
 
     }
+    
 
     functionseats = function(movie, fechaFuncion){
       nombrePelicula = movie;
@@ -88,6 +146,10 @@ var app = (function () {
     cambiarFuncion: setFunction,
     crearFormulario: formulario,
     eliminarFuncion: deleteFunction,
+    init : init,
+    buyTicket: function(col,row){
+      buyTicket(col,row);
+    },
     getSeats :function(movie, fechaFuncion){
       functionseats (movie,fechaFuncion);
     }
